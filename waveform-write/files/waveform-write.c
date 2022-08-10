@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 	fclose(f);
 	printf("wave file read\n");
 	printf("Wave[0] = %d, Wave[%d] = %d, Wave[%d] = %d \n", wave[0], lines/2, wave[lines/2], lines, wave[lines-1]);
-i
+
 	/* write samples to RFDC using DMA */
 	ret = WriteDataToMemory(wave, tile_id, block_id, lines * sizeof(signed short));
 	free(wave);
