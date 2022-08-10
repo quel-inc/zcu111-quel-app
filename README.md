@@ -2,6 +2,8 @@
 
 ## Build ZCU111-app
 
+The following example is building `waveform-manage`.
+
 Make a symbolic link to the target resources in the petalinux-app directory.
 
 ```
