@@ -30,8 +30,6 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	clean_stdin();
-
 	/* configure LMX and LMK clock */
 	ret = initRFclock(ZCU111, LMK04208_12M8_3072M_122M88_REVAB, DAC_245_76_MHZ, DAC_245_76_MHZ, ADC_245_76_MHZ);
 
