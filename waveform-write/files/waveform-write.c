@@ -6,6 +6,146 @@
 #include "clock_interface.h"
 #include "rfdc_functions.h"
 #define RFDC_DEVICE_ID  0
+void clean_stdin(void)
+{
+	int c;
+	do {
+		c = getchar();
+	} while (c != '\n' && c != EOF);
+}
+
+int main(int argc, char *argv[])
+{
+	int ret;
+	char ch;
+	unsigned int lmk_offset, lmx_offset;
+	int tile_id, block_id;
+	int num, i;
+
+	/* initialise RFDC instent*/
+	ret = rfdc_inst_init(RFDC_DEVICE_ID);
+	if(ret != XRFDC_SUCCESS) {
+		printf("Failed to initilize RFDC\n");
+		return -1;
+	}
+	
+	/* configure LMX and LMK clock */
+	ret = initRFclock(ZCU111, LMK04208_12M8_3072M_122M88_REVAB, DAC_245_76_MHZ, DAC_245_76_MHZ, ADC_245_76_MHZ);
+
+	if(ret != SUCCESS){
+		printf("Unable to configure RF clocks\n");
+		return ret;
+	}
+
+	ret = init_mem();
+	if(ret) {
+		return FAIL;
+	}
+
+	/* initialise the gpio's for data path */
+	ret = init_gpio();
+	if(ret) {
+		printf("Unable to initialise gpio's\n");
+		goto err;
+	}
+
+	printf("Please enter DAC tile ID:");
+	scanf("%d", &tile_id);
+
+	printf("Please enter DAC block ID:");
+	scanf("%d", &block_id);
+
+	clean_stdin();
+
+	if((tile_id >= DAC_MAX_TILE) || (block_id >= DAC_MAX_BLOCK)) {
+		printf("Invaild pair of Tile ID and Block ID entered\n");
+		goto err;
+	}
+
+	/* Open waveform */
+	int lines;
+
+	FILE *f;
+	f = fopen(argv[1],"r");
+
+	if (f == NULL){
+		printf("File open error\n");
+		exit(1);
+	}
+
+	lines = 0;
+	int reading;
+	reading = 1;
+
+	char getchar[20];
+
+	while (reading ==1){
+		if ((fscanf(f,"%s",&getchar[0])) == EOF){
+			reading = 0;
+			lines -= 1;
+			}
+		lines += 1;
+	}
+	fclose(f);
+
+	printf("Got number of samples: %d\n", lines);
+
+	f = fopen(argv[1],"r");
+
+	if (lines==1024){
+		signed short wave_1024[1024];
+		for (i = 0; i<lines; i++){
+			fscanf(f,"%d", &num);
+			wave_1024[i] = num;}
+		fclose(f);
+		printf("wave_1024 file read\n");
+		printf("Wave[0] = %d, Wave[%d] = %d, Wave[%d] = %d \n", wave_1024[0], lines/2, wave_1024[lines/2], lines, wave_1024[lines]);
+		ret = WriteDataToMemory(wave_1024, tile_id, block_id, lines * sizeof(signed short));}
+
+	if (lines==1056){
+		signed short wave_1056[1056];
+		for (i = 0; i<lines; i++){
+			fscanf(f,"%d", &num);
+			wave_1056[i] = num;}
+		fclose(f);
+		printf("wave_1056 file read\n");
+		printf("Wave[0] = %d, Wave[%d] = %d, Wave[%d] = %d \n", wave_1056[0], lines/2, wave_1056[lines/2], lines, wave_1056[lines]);
+		ret = WriteDataToMemory(wave_1056, tile_id, block_id, lines * sizeof(signed short));}
+
+	if (lines==1088){
+		signed short wave_1088[1088];
+		for (i = 0; i<lines; i++){
+			fscanf(f,"%d", &num);
+			wave_1088[i] = num;}
+		fclose(f);
+		printf("wave_1088 file read\n");
+		printf("Wave[0] = %d, Wave[%d] = %d, Wave[%d] = %d \n", wave_1088[0], lines/2, wave_1088[lines/2], lines, wave_1088[lines]);
+		ret = WriteDataToMemory(wave_1088, tile_id, block_id, lines * sizeof(signed short));}
+
+	if (lines==1120){
+		signed short wave_1120[1120];
+		for (i = 0; i<lines; i++){
+			fscanf(f,"%d", &num);
+			wave_1120[i] = num;}
+		fclose(f);
+		printf("wave_1120 file read\n");
+		printf("Wave[0] = %d, Wave[%d] = %d, Wave[%d] = %d \n", wave_1120[0], lines/2, wave_1120[lines/2], lines, wave_1120[lines]);
+		ret = WriteDataToMemory(wave_1120, tile_id, block_id, lines * sizeof(signed short));}
+
+	if (lines==1152){
+		signed short wave_1152[1152];
+		for (i = 0; i<lines; i++){
+			fscanf(f,"%d", &num);
+			wave_1152[i] = num;}
+		fclose(f);
+#include <stdio.h>
+#include <stdlib.h>
+#include "xrfdc.h"
+#include "rfdc_interface.h"
+#include "data_interface.h"
+#include "clock_interface.h"
+#include "rfdc_functions.h"
+#define RFDC_DEVICE_ID  0
 
 void clean_stdin(void)
 {
@@ -104,20 +244,22 @@ int main(int argc, char *argv[])
 	
 	for (i = 0; i<lines; i++){
 		fscanf(f,"%d", &num);
-		wave[i] = num;}
+		wave[i] = num;
+	}
 	fclose(f);
 	printf("wave file read\n");
 	printf("Wave[0] = %d, Wave[%d] = %d, Wave[%d] = %d \n", wave[0], lines/2, wave[lines/2], lines, wave[lines-1]);
+i
+	/* write samples to RFDC using DMA */
 	ret = WriteDataToMemory(wave, tile_id, block_id, lines * sizeof(signed short));
 	free(wave);
 
-	/* write samples to RFDC using DMA */
 	if(ret != 0) {
 		printf("Failed to write data to DAC. Error: %d\n", ret);
 		goto err;
 	}
 
-	printf("static wave was generated according to the file %s, of %d samples, on tile: %d, block %d\n", argv[1], lines, tile_id, block_id);
+	printf("Static wave was generated according to the file %s, of %d samples, on tile: %d, block %d\n", argv[1], lines, tile_id, block_id);
 
 here:
 	printf("Press Enter to stop data samples and exit\n");
@@ -142,3 +284,4 @@ err:
 	}
 	return FAIL;
 }
+
