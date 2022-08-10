@@ -125,7 +125,7 @@ enum pll_src { PLL_A = 0x8, PLL_B = 0x4, PLL_C = 0x1 };
 
 /************************** Function Prototypes ******************************/
 int initRFclock(u32 board_id, u32 lmk_freq, u32 lmx0_freq, u32 lmx1_freq,
-                u32 lmx2_freq, double FSvalue);
+                u32 lmx2_freq);
 int iic_device_write(u32 inst, u32 slave, u32 pll_src, u32 size, u32 data);
 
 #endif /* SRC_CLOCK_INTERFACE_ */

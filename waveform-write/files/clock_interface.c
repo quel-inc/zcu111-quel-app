@@ -776,7 +776,7 @@ char *StrRepl(char *str, char x, char y) {
 }
 
 int initRFclock(u32 board_id, u32 lmk_freq, u32 lmx0_freq, u32 lmx1_freq,
-                u32 lmx2_freq, double FSvalue) {
+                u32 lmx2_freq) {
   unsigned int ret, i;
 
   /* set LMK clock */
@@ -822,7 +822,7 @@ int initRFclock(u32 board_id, u32 lmk_freq, u32 lmx0_freq, u32 lmx1_freq,
 
   /* Configure internal PLL */
   for(i= 0; i < DAC_MAX_TILE; i++) {
-	  ret =  XRFdc_DynamicPLLConfig(&RFdcInst, 1, i, 1, 245.76, FSvalue);
+	  ret =  XRFdc_DynamicPLLConfig(&RFdcInst, 1, i, 1, 245.76, 3932.16);
   }
 
 
