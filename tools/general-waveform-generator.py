@@ -1,12 +1,8 @@
-import csv
 import numpy as np
 import math
-import pprint
 from matplotlib import pyplot as pyp
 from scipy.fftpack import fft, fftshift, fftfreq
 from scipy.signal import find_peaks
-import pandas as pd
-
 #Sampling Frequency (245.76*N/M) [MHz]
 Fs = 3932.160
 #Fs = 6512.64
