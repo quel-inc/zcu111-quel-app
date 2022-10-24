@@ -821,11 +821,10 @@ int initRFclock(u32 board_id, u32 lmk_freq, u32 lmx0_freq, u32 lmx1_freq,
 
   for (i = 0; i < MAX_ADC_TILE; i++) {
     ret = XRFdc_DynamicPLLConfig(&RFdcInst, 0, i, 1, 245.76, 4096);
-
   }
 
   for (i = 0; i < MAX_DAC_TILE; i++) {
-    ret = XRFdc_DynamicPLLConfig(&RFdcInst, 1, i, 1, 245.76, 6553.6);
+    ret = XRFdc_DynamicPLLConfig(&RFdcInst, 1, i, 1, 245.76, 3932.16);
   }
 
   return SUCCESS;
